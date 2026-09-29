@@ -211,6 +211,9 @@
   }
 
   const form = document.querySelector('form[name="consultation"]');
+  const leadCaptureFrame = document.getElementById('leadCaptureFrame');
+  let leadSubmissionPending = false;
+
   if (form) {
     const submitButton = form.querySelector('button[type="submit"]');
 
@@ -229,6 +232,7 @@
       };
 
       sessionStorage.setItem('hc_consultation_lead', JSON.stringify(leadContext));
+      leadSubmissionPending = true;
 
       if (window.dataLayer) {
         window.dataLayer.push({
@@ -240,8 +244,23 @@
 
       if (submitButton) {
         submitButton.setAttribute('aria-busy', 'true');
+        submitButton.disabled = true;
         submitButton.innerHTML = 'Saving Request…';
       }
+    });
+  }
+
+  if (leadCaptureFrame) {
+    leadCaptureFrame.addEventListener('load', () => {
+      if (!leadSubmissionPending) return;
+
+      leadSubmissionPending = false;
+
+      if (window.dataLayer) {
+        window.dataLayer.push({ event: 'lead_capture_complete' });
+      }
+
+      window.location.assign('/success.html');
     });
   }
 
