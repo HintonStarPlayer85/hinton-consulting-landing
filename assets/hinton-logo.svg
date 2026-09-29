@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 142" role="img" aria-labelledby="title desc">
+  <title id="title">Hinton Consulting</title>
+  <desc id="desc">Hinton Consulting logo with the purple and charcoal H mark and Think Strategy. Do Business. tagline.</desc>
+  <g transform="translate(4 8)">
+    <path fill="#67459A" d="M0 0h76v22H24v52H0V0zm24 26h48v22H24V26z"/>
+    <path fill="#39383D" d="M52 28h24v50h52V28h24v76H52V28zm48 50h28v26h-28V78z"/>
+  </g>
+  <text x="170" y="70" fill="#2F2F33" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="300" letter-spacing="-3">hinton</text>
+  <line x1="173" y1="86" x2="230" y2="86" stroke="#4A494E" stroke-width="2"/>
+  <text x="240" y="91" fill="#4A494E" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="500" letter-spacing="3">CONSULTING</text>
+  <line x1="390" y1="86" x2="505" y2="86" stroke="#4A494E" stroke-width="2"/>
+  <text x="174" y="118" fill="#67459A" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-weight="700">THINK STRATEGY. DO BUSINESS.</text>
+</svg>
