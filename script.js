@@ -175,6 +175,21 @@
     });
   });
 
+  document.querySelectorAll('a[href*="calendly.com/jacquese-hinton/business-discovery-consultation"]').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (window.dataLayer) {
+        window.dataLayer.push({
+          event: 'calendly_booking_click',
+          source: link.closest('.sticky-consult')
+            ? 'sticky_prompt'
+            : link.closest('.site-header')
+              ? 'header'
+              : 'hero'
+        });
+      }
+    });
+  });
+
   const sticky = document.getElementById('stickyConsult');
   const stickyClose = document.getElementById('stickyClose');
   const dismissed = sessionStorage.getItem('hc_consult_dismissed') === '1';
