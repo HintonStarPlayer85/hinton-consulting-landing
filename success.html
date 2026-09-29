@@ -10,15 +10,64 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
-  <title>Consultation Request Received | Hinton Consulting</title>
+  <title>Continue to Scheduling | Hinton Consulting</title>
 </head>
 <body class="success-page">
-  <main class="success-card">
+  <main class="success-card" aria-labelledby="success-title">
     <img class="success-logo" src="/assets/hintonLOGO.png" alt="Hinton Consulting — Think Strategy. Do Business." />
-    <p class="eyebrow dark">CONSULTATION REQUEST</p>
-    <h1>Your request has been received.</h1>
-    <p>Thank you for contacting Hinton Consulting. Your consultation request has been submitted for review.</p>
-    <p><a class="button button-primary" href="/">Return to Hinton Consulting</a></p>
+    <p class="section-kicker">STEP 1 COMPLETE</p>
+    <h1 id="success-title">Your request is saved.</h1>
+    <p>Next, select a time for your Business Discovery Consultation. We’re taking you to the Hinton Consulting scheduling calendar now.</p>
+    <div class="success-actions">
+      <a class="button button-primary glow" id="scheduleNow" href="https://calendly.com/jacquese-hinton/business-discovery-consultation">Schedule My Consultation <span aria-hidden="true">→</span></a>
+      <p class="redirect-note" id="redirectNote">Redirecting to scheduling in <strong id="countdown">4</strong> seconds…</p>
+    </div>
+    <p class="success-secondary"><a href="/">Return to Hinton Consulting</a></p>
   </main>
+
+  <script>
+    (() => {
+      const baseUrl = 'https://calendly.com/jacquese-hinton/business-discovery-consultation';
+      let lead = {};
+
+      try {
+        lead = JSON.parse(sessionStorage.getItem('hc_consultation_lead') || '{}');
+      } catch (_) {}
+
+      const params = new URLSearchParams();
+
+      if (lead.name) params.set('name', lead.name);
+      if (lead.email) params.set('email', lead.email);
+      if (lead.utm_source) params.set('utm_source', lead.utm_source);
+      if (lead.utm_medium) params.set('utm_medium', lead.utm_medium);
+      if (lead.utm_campaign) params.set('utm_campaign', lead.utm_campaign);
+      if (lead.utm_content) params.set('utm_content', lead.utm_content);
+
+      const schedulingUrl = params.toString()
+        ? baseUrl + '?' + params.toString()
+        : baseUrl;
+
+      const scheduleNow = document.getElementById('scheduleNow');
+      if (scheduleNow) scheduleNow.href = schedulingUrl;
+
+      let remaining = 4;
+      const countdown = document.getElementById('countdown');
+
+      const timer = window.setInterval(() => {
+        remaining -= 1;
+        if (countdown) countdown.textContent = String(Math.max(remaining, 0));
+
+        if (remaining <= 0) {
+          window.clearInterval(timer);
+
+          if (window.dataLayer) {
+            window.dataLayer.push({ event: 'calendly_redirect' });
+          }
+
+          window.location.replace(schedulingUrl);
+        }
+      }, 1000);
+    })();
+  </script>
 </body>
 </html>
