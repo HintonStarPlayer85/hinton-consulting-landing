@@ -159,6 +159,11 @@
     landingPath.value = `${window.location.pathname}${window.location.search}`;
   }
 
+  const referrerField = document.getElementById('referrer');
+  if (referrerField) {
+    referrerField.value = document.referrer || '';
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', () => {
       const target = link.getAttribute('href');
@@ -209,11 +214,7 @@
   if (form) {
     const submitButton = form.querySelector('button[type="submit"]');
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      if (!form.reportValidity()) return;
-
+    form.addEventListener('submit', () => {
       const formData = new FormData(form);
       const leadContext = {
         name: String(formData.get('name') || ''),
@@ -227,50 +228,19 @@
         utm_content: String(formData.get('utm_content') || '')
       };
 
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.setAttribute('aria-busy', 'true');
-        submitButton.innerHTML = 'Saving Request…';
+      sessionStorage.setItem('hc_consultation_lead', JSON.stringify(leadContext));
+
+      if (window.dataLayer) {
+        window.dataLayer.push({
+          event: 'consultation_form_submit',
+          focus: leadContext.focus,
+          organization: leadContext.organization
+        });
       }
 
-      try {
-        const response = await fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(formData).toString()
-        });
-
-        if (!response.ok) throw new Error(`Submission failed with status ${response.status}`);
-
-        sessionStorage.setItem('hc_consultation_lead', JSON.stringify(leadContext));
-
-        if (window.dataLayer) {
-          window.dataLayer.push({
-            event: 'consultation_form_submit',
-            focus: leadContext.focus,
-            organization: leadContext.organization
-          });
-        }
-
-        window.location.assign('/success.html');
-      } catch (error) {
-        console.error('Consultation form submission failed:', error);
-
-        if (submitButton) {
-          submitButton.disabled = false;
-          submitButton.removeAttribute('aria-busy');
-          submitButton.innerHTML = 'Continue to Scheduling <span aria-hidden="true">→</span>';
-        }
-
-        let errorMessage = form.querySelector('.form-error');
-        if (!errorMessage) {
-          errorMessage = document.createElement('p');
-          errorMessage.className = 'form-error';
-          errorMessage.setAttribute('role', 'alert');
-          form.appendChild(errorMessage);
-        }
-
-        errorMessage.textContent = 'We could not save your request. Please try again.';
+      if (submitButton) {
+        submitButton.setAttribute('aria-busy', 'true');
+        submitButton.innerHTML = 'Saving Request…';
       }
     });
   }
