@@ -1,59 +1,82 @@
 # Hinton Consulting Landing System
 
-Production static landing-page system for Hinton Consulting, designed for GitHub source control and Netlify deployment.
+Production static landing-page system for Hinton Consulting.
 
 ## Deployment architecture
 
-GitHub -> Netlify -> `consult.hintonconsultingllc.com`
+GitHub Pages → `consult.hintonconsultingllc.com`
+
+Lead capture is handled separately through Google Apps Script and Google Sheets:
+
+Landing page → Google Apps Script → Google Sheet → branded success page → Calendly
 
 ## Core files
 
 - `index.html` — primary conversion landing page
-- `styles.css` — shared design system and responsive layout
-- `script.js` — navigation, motion, UTM capture, campaign analytics hooks, sticky consultation prompt
-- `success.html` — consultation form success page
-- `netlify.toml` — deployment, redirects, and security headers
+- `styles.css` — Hinton Consulting visual system and responsive layout
+- `script.js` — navigation, interaction, UTM capture, lead handoff, and conversion UX
+- `success.html` — post-capture transition to Calendly
+- `CNAME` — custom GitHub Pages domain
+- `.nojekyll` — publish static files directly without Jekyll processing
 - `robots.txt` and `sitemap.xml` — search-engine configuration
+- `google-apps-script/Code.gs` — free lead-capture backend
+- `google-apps-script/SETUP.md` — Google Apps Script deployment notes
 
-## Netlify deployment
+## GitHub Pages configuration
 
-1. In Netlify choose **Add new site -> Import an existing project -> GitHub**.
-2. Select `HintonStarPlayer85/hinton-consulting-landing`.
-3. No build command is required.
-4. Publish directory: `.`
-5. Deploy the site.
-6. Under **Domain management**, add `consult.hintonconsultingllc.com`.
-7. Create the CNAME record Netlify provides at the DNS provider for `hintonconsultingllc.com`.
-8. Verify HTTPS/TLS provisioning.
+Publishing source:
+
+- Branch: `main`
+- Folder: `/ (root)`
+- Custom domain: `consult.hintonconsultingllc.com`
+
+DNS at GoDaddy:
+
+- Type: `CNAME`
+- Name: `consult`
+- Value: `HintonStarPlayer85.github.io`
+- TTL: default
+
+Do not include the repository name in the CNAME target.
 
 ## Form handling
 
-The consultation form uses Netlify Forms and captures:
+The consultation form posts directly to the deployed Google Apps Script web app. Netlify Forms is not used.
 
-- `utm_source`
-- `utm_medium`
-- `utm_campaign`
-- `utm_content`
-- `landing_path`
+Captured fields include:
+
+- Name
+- Work email
+- Organization
+- Phone
+- Primary focus
+- Challenge / objective
+- UTM source
+- UTM medium
+- UTM campaign
+- UTM content
+- Landing path
+- Referrer
 
 The form explicitly instructs visitors not to submit patient/client PHI.
 
 ## Analytics hooks
 
-The JavaScript emits:
+The JavaScript emits conversion events including:
 
 - `consultation_cta_click`
 - `consultation_form_submit`
+- `lead_capture_complete`
+- `calendly_redirect`
 
-These hooks can be consumed later by Google Tag Manager / GA4 or another analytics layer.
+## Deployment QA
 
-## Launch QA
+After GitHub Pages is enabled:
 
-Before public launch:
-
-- Confirm final custom subdomain.
-- Replace the typographic wordmark with the official logo asset if desired.
-- Test Netlify Forms end-to-end.
-- Add analytics/tag-manager IDs if campaign attribution will be measured.
-- Confirm privacy/legal wording.
-- Test desktop, tablet, and mobile layouts.
+1. Confirm the Pages build is published.
+2. Confirm `consult.hintonconsultingllc.com` is configured under repository Settings → Pages.
+3. Update the GoDaddy `consult` CNAME to `HintonStarPlayer85.github.io`.
+4. Wait for DNS verification and HTTPS provisioning.
+5. Enable **Enforce HTTPS** once available.
+6. Test the full lead flow:
+   form → Google Sheet → success page → Calendly.
