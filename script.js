@@ -175,20 +175,6 @@
     });
   });
 
-  document.querySelectorAll('a[href*="calendly.com/jacquese-hinton/business-discovery-consultation"]').forEach((link) => {
-    link.addEventListener('click', () => {
-      if (window.dataLayer) {
-        window.dataLayer.push({
-          event: 'calendly_booking_click',
-          source: link.closest('.sticky-consult')
-            ? 'sticky_prompt'
-            : link.closest('.site-header')
-              ? 'header'
-              : 'hero'
-        });
-      }
-    });
-  });
 
   const sticky = document.getElementById('stickyConsult');
   const stickyClose = document.getElementById('stickyClose');
@@ -221,12 +207,70 @@
 
   const form = document.querySelector('form[name="consultation"]');
   if (form) {
-    form.addEventListener('submit', () => {
-      if (window.dataLayer) {
-        window.dataLayer.push({
-          event: 'consultation_form_submit',
-          focus: form.elements.focus?.value || ''
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!form.reportValidity()) return;
+
+      const formData = new FormData(form);
+      const leadContext = {
+        name: String(formData.get('name') || ''),
+        email: String(formData.get('email') || ''),
+        organization: String(formData.get('organization') || ''),
+        phone: String(formData.get('phone') || ''),
+        focus: String(formData.get('focus') || ''),
+        utm_source: String(formData.get('utm_source') || ''),
+        utm_medium: String(formData.get('utm_medium') || ''),
+        utm_campaign: String(formData.get('utm_campaign') || ''),
+        utm_content: String(formData.get('utm_content') || '')
+      };
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.setAttribute('aria-busy', 'true');
+        submitButton.innerHTML = 'Saving Request…';
+      }
+
+      try {
+        const response = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString()
         });
+
+        if (!response.ok) throw new Error(`Submission failed with status ${response.status}`);
+
+        sessionStorage.setItem('hc_consultation_lead', JSON.stringify(leadContext));
+
+        if (window.dataLayer) {
+          window.dataLayer.push({
+            event: 'consultation_form_submit',
+            focus: leadContext.focus,
+            organization: leadContext.organization
+          });
+        }
+
+        window.location.assign('/success.html');
+      } catch (error) {
+        console.error('Consultation form submission failed:', error);
+
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.removeAttribute('aria-busy');
+          submitButton.innerHTML = 'Continue to Scheduling <span aria-hidden="true">→</span>';
+        }
+
+        let errorMessage = form.querySelector('.form-error');
+        if (!errorMessage) {
+          errorMessage = document.createElement('p');
+          errorMessage.className = 'form-error';
+          errorMessage.setAttribute('role', 'alert');
+          form.appendChild(errorMessage);
+        }
+
+        errorMessage.textContent = 'We could not save your request. Please try again.';
       }
     });
   }
