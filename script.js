@@ -260,7 +260,7 @@
         window.dataLayer.push({ event: 'lead_capture_complete' });
       }
 
-      window.location.assign('/success.html');
+      window.location.assign('success.html');
     });
   }
 
