@@ -337,7 +337,7 @@
           </div>
         </div>
 
-        <form class="consultation-form" name="consultation" method="POST" action="https://script.google.com/macros/s/AKfycbwIQRwKXDsTo6ujNXytYF8YTq6BpB5fmw__kk4yDjdoSD6kPeLTTzSAG4lQTZu5DWOd/exec">
+        <form class="consultation-form" name="consultation" method="POST" action="https://script.google.com/macros/s/AKfycbwIQRwKXDsTo6ujNXytYF8YTq6BpB5fmw__kk4yDjdoSD6kPeLTTzSAG4lQTZu5DWOd/exec" target="leadCaptureFrame">
           <p class="hidden-field"><label>Do not fill this out if you are human: <input name="bot-field" /></label></p>
           <input type="hidden" name="utm_source" id="utm_source" />
           <input type="hidden" name="utm_medium" id="utm_medium" />
@@ -384,6 +384,7 @@
           <p class="privacy-note">Please do not include patient, client, or other protected health information.</p>
           <button class="button button-primary form-submit glow" type="submit">Continue to Scheduling <span aria-hidden="true">→</span></button>
         </form>
+        <iframe class="lead-capture-frame" id="leadCaptureFrame" name="leadCaptureFrame" title="Lead capture submission" aria-hidden="true"></iframe>
       </div>
     </section>
   </main>
