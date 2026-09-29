@@ -58,3 +58,12 @@ The Apps Script writes the lead before it returns the visitor to the branded tra
 - Spreadsheet formula-injection protection
 - Script locking for simultaneous submissions
 - No patient/client PHI should be entered through the marketing form
+
+
+## Deployed production endpoint
+
+The Apps Script web app is deployed at:
+
+`https://script.google.com/macros/s/AKfycbwIQRwKXDsTo6ujNXytYF8YTq6BpB5fmw__kk4yDjdoSD6kPeLTTzSAG4lQTZu5DWOd/exec`
+
+The production landing page posts directly to this endpoint. Netlify Forms is not used for consultation lead capture.
